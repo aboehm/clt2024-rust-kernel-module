@@ -14,11 +14,17 @@ Directory structure:
 
 ## Prepare
 
-### Required tools
+Install the required tools
 
 ```sh
 # Debian/Ubuntu
-apt-get install busybox-static gzip docker.io qemu-system-x86
+apt-get install busybox-static git gzip docker.io qemu-system-x86
+```
+
+Clone the repository
+
+```
+git clone --recurse-submodules https://vcs.malbolge.net/chaosox/clt2024-rust-on-linux-workshop.git
 ```
 
 ### Containered tools
