@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p initramfs
+./build-env make LLVM=1 INSTALL_MOD_PATH=/initramfs -j`nproc` vmlinux modules modules_install

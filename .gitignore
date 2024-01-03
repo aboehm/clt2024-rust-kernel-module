@@ -1,0 +1,3 @@
+# Ignore initramfs
+initramfs
+initramfs.cpio

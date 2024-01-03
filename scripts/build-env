@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+mkdir -p initramfs
+docker run --rm -it \
+    -u $(id -u):$(id -g) \
+    -v "`pwd`/linux:/usr/src" \
+    -v "`pwd`/initramfs:/initramfs" \
+    -w /usr/src \
+    rust-for-linux-builder \
+    $*
