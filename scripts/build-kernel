@@ -1,4 +1,12 @@
 #!/bin/sh
 
+set -e
+
+# Ensure initramfs directory exists
 mkdir -p initramfs
-./scripts/build-env make LLVM=1 INSTALL_MOD_PATH=/initramfs -j`nproc` vmlinux modules modules_install
+
+# Build the kernel
+./scripts/build-env make -j`nproc` LLVM=1 all
+
+# Install the kernel modules into initramfs directory
+./scripts/build-env make LLVM=1 INSTALL_MOD_PATH=/initramfs modules_install
