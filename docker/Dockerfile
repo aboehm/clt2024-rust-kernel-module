@@ -7,6 +7,7 @@ RUN apt-get update && \
         bc \
         bison \
         build-essential \
+        busybox-static \
         clang \
         clang-14 \
         cpio \
