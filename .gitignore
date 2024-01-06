@@ -1,3 +1,2 @@
-# Ignore initramfs
-initramfs
-initramfs.cpio
+# Ignore build artifacts
+build
