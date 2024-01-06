@@ -5,6 +5,7 @@ set -e
 qemu-system-x86_64 \
     -monitor none \
     -serial stdio \
-    --kernel linux/arch/x86_64/boot/bzImage \
-    --initrd initramfs.cpio \
-    --append "init=/sbin/init console=ttyS0" \
+    --kernel build/bzImage \
+    --initrd build/initramfs.cpio \
+    --append "console=ttyS0 debug" \
+    --vga none -display none # Disable this line to get a display output

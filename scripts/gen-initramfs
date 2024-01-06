@@ -3,17 +3,11 @@
 set -e
 
 # Ensure initramfs directory exists
-mkdir -p initramfs
-cd initramfs
+mkdir -p build/initramfs
+cd build/initramfs
 
 # Create directory layout
-mkdir -p bin etc dev proc sbin sys usr/bin usr/sbin
-
-# Create some basic devices
-[ -e dev/zero ] || sudo mknod -m 644 dev/zero b 1 3
-[ -e dev/null ] || sudo mknod -m 644 dev/null b 1 5
-[ -e dev/console ] || sudo mknod -m 644 dev/console c 5 1 
-[ -e dev/loop0 ] || sudo mknod -m 644 dev/loop0 b 7 0
+mkdir -p bin etc/init.d dev proc sbin sys usr/bin usr/sbin
 
 # Install busybox
 cp -f /usr/bin/busybox bin
@@ -22,8 +16,29 @@ bin/busybox --install bin
 # Create a basic init script
 cat >init <<EOF
 #!/bin/sh
+
+# Only sleep short time to wait for some debug messages
+sleep 1
+
+echo ""
+echo "################################"
+echo "# Starting into minimal rootfs #"
+echo "################################"
+echo ""
+
+# Mount kernel filesystems
 mount -t proc none /proc
 mount -t sysfs none /sys
+
+# Generate devices
+/bin/mdev -s
+
+echo "Loading minimal rust sample module via:"
+echo ""
+echo "  insmod lib/modules/\`uname -r\`/kernel/samples/rust/rust_minimal.ko"
+echo ""
+insmod lib/modules/\`uname -r\`/kernel/samples/rust/rust_minimal.ko
+
 exec /bin/sh
 EOF
 chmod +x init

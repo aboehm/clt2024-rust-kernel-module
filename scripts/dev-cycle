@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+# Build kernel if not exists
+[ -f build/bzImage ] || ./scripts/build-env ./scripts/build-kernel
+# Build the module
+./scripts/build-env ./scripts/build-module
+# Regenerate the initramfs
+./scripts/build-env ./scripts/gen-initramfs
+# Run the kernel
+./scripts/run-kernel

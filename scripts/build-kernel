@@ -2,11 +2,14 @@
 
 set -e
 
-# Ensure initramfs directory exists
-mkdir -p initramfs
+cd linux
 
 # Build the kernel
-./scripts/build-env make -j`nproc` LLVM=1 all
+make -j`nproc` LLVM=1 all
+
+# Copy the built kernel into build directory
+cp arch/x86/boot/bzImage ../build/bzImage
 
 # Install the kernel modules into initramfs directory
-./scripts/build-env make LLVM=1 INSTALL_MOD_PATH=/initramfs modules_install
+make LLVM=1 INSTALL_MOD_PATH=../build/initramfs modules_install
+
