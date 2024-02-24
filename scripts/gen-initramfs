@@ -32,6 +32,7 @@ mount -t sysfs none /sys
 
 # Generate devices
 /bin/mdev -s
+echo /bin/mdev >/proc/sys/kernel/hotplug
 
 echo "Loading minimal rust sample module via:"
 echo ""
