@@ -13,4 +13,3 @@ cp arch/x86/boot/bzImage ../build/bzImage
 
 # Install the kernel modules into initramfs directory
 make LLVM=1 INSTALL_MOD_PATH=../build/initramfs modules_install
-
