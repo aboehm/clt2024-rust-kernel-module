@@ -3,4 +3,4 @@
 set -e
 
 cd docker
-docker build -t rust-for-linux-builder . 
+docker build -t docker.io/aboehm/clt2024-rust-on-linux-workshop .
