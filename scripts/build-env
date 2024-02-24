@@ -6,5 +6,6 @@ docker run --rm -it \
     -u $(id -u):$(id -g) \
     -v "`pwd`:/usr/src" \
     -w "/usr/src" \
+    --network=host \
     rust-for-linux-builder \
     $*
