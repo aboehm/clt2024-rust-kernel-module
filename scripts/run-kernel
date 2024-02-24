@@ -8,4 +8,5 @@ qemu-system-x86_64 \
     --kernel build/bzImage \
     --initrd build/initramfs.cpio \
     --append "console=ttyS0 debug" \
+    -s \
     --vga none -display none # Disable this line to get a display output
