@@ -38,10 +38,21 @@ echo "Loading minimal rust sample module via:"
 echo ""
 echo "  insmod lib/modules/\`uname -r\`/kernel/samples/rust/rust_minimal.ko"
 echo ""
-insmod lib/modules/\`uname -r\`/kernel/samples/rust/rust_minimal.ko
+insmod /lib/modules/\`uname -r\`/kernel/samples/rust/rust_minimal.ko
 
 exec /bin/sh
 EOF
 chmod +x init
+
+# Create a device testing helper script
+cat >bin/test-rust-device <<EOF
+#!/bin/sh
+echo "Loading rust device module"
+insmod /lib/modules/\`uname -r\`/kernel/samples/rust/rust_chrdev.ko
+sleep 0.3
+echo "Reading one byte from character device"
+dd if=/dev/rchrdev of=/dev/null bs=1 count=1
+EOF
+chmod +x bin/test-rust-device
 
 find . |cpio -H newc --owner 0:0 -o -O ../initramfs.cpio
