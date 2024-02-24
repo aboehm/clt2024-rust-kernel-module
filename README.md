@@ -36,7 +36,7 @@ git clone --recurse-submodules https://vcs.malbolge.net/chaosox/clt2024-rust-on-
 
 ### Containered tools
 
-Build container with all required tools
+Build container with all required tools. This is optional. You can pull it from docker hub instead.
 
 ```sh
 ./scripts/build-builder
@@ -48,7 +48,43 @@ After that you can enter the build environment with
 ./scripts/build-env
 ```
 
-## Development cycle
+## Development
+
+### Configure the kernel
+
+Copy the prepared kernel config from [linux-config/v6.7-rust-clt24](linux-config/v6.7-rust-clt24) to `linux/.config`.
+After you can modify the configuration.
+
+```sh
+make LLVM=1 menuconfig
+```
+
+### Build everything
+
+Start the build process
+
+```
+# Build the kernel and modules
+make -j`nproc` LLVM=1 all
+# Install the module into 
+make LLVM=1 INSTALL_MOD_PATH=<path to initramfs> modules_install
+```
+
+After some minutes the should be store under `arch/x86/boot/bzImage`.
+
+You can run the kernel with [QEMU](https://qemu.org)
+
+```sh
+qemu-system-x86_64 --kernel arch/x86/boot/bzImage
+```
+
+### A simple root file system
+
+TBD
+
+### Repetitive steps via helper scripts
+
+There're several helper scripts to run some required commands.
 
 Build the kernel and modules and install the modules into initramfs
 
