@@ -6,6 +6,7 @@ cd linux
 
 # Build the kernel
 make -j`nproc` LLVM=1 all
+make LLVM=1 SPHINXDIRS="rust"
 
 # Copy the built kernel into build directory
 cp arch/x86/boot/bzImage ../build/bzImage
