@@ -14,8 +14,16 @@ jobs:
         with:
           submodules: 'true'
 
-      - name: Build kernel
+      - name: Build kernel and modules
         run: |
           cp linux-config/v6.7-rust-clt24 linux/.config
-          cd linux
-          make -j`nproc` LLVM=1 all
+          scripts/build-kernel
+          scripts/gen-initramfs
+
+      - name: Store kernel and initramfs
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-initramfs
+          path: |
+            build/bzImage
+            build/initramfs.cpio
