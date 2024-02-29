@@ -2,7 +2,11 @@ name: Image building of build environment
 
 on:
   push:
-    branches: [ "main" ]
+    paths:
+      - 'docker/Dockerfile'
+  schedule:
+    # Build the image once a week to update all debian packages
+    - cron:  '30 3 */7 * *'
 
 jobs:
   build_environment:
