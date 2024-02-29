@@ -3,4 +3,4 @@
 set -e
 
 cd docker
-docker build -t docker.io/aboehm/clt2024-rust-on-linux-workshop .
+docker build -t docker.io/aboehm/clt2024-rust-on-linux-workshop:`uname -m` .
