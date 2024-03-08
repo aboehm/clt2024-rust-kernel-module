@@ -2,10 +2,33 @@
 
 set -e
 
-docker run --rm -it \
-    -u $(id -u):$(id -g) \
-    -v "`pwd`:/usr/src" \
-    -w "/usr/src" \
-    --network=host \
-    docker.io/aboehm/clt2024-rust-on-linux-workshop:`uname -m` \
-    $*
+IMAGE="docker.io/aboehm/clt2024-rust-on-linux-workshop:`uname -m`"
+
+# Detect a container runtime
+[ -z "${DOCKER_BIN}" ] && DOCKER_BIN=$(command -v podman || true)
+[ -z "${DOCKER_BIN}" ] && DOCKER_BIN=$(command -v docker || true)
+
+case "${DOCKER_BIN}" in
+    */podman|podman)
+        podman run \
+            --rm -it \
+            -v "`pwd`:/usr/src" \
+            -w "/usr/src" \
+            --network=host \
+            ${IMAGE} \
+            $*
+        ;;
+
+    */docker|docker)
+        docker run \
+            --rm -it \
+            -v "`pwd`:/usr/src" \
+            -w "/usr/src" \
+            --network=host \
+            ${IMAGE} \
+            $*
+        ;;
+    *)
+        echo "Can't find docker or podman binary in PATH. Please install one of it."
+        exit 1
+esac

@@ -25,27 +25,40 @@ Install the required tools
 
 ```sh
 # Debian/Ubuntu
-apt-get install git docker.io qemu-system-x86
+apt-get install git podman qemu-system-x86
 ```
 
 Clone the repository
 
 ```
-git clone --recurse-submodules https://vcs.malbolge.net/chaosox/clt2024-rust-on-linux-workshop.git
+git clone --recurse-submodules https://github.com/aboehm/clt2024-rust-kernel-module.git 
 ```
 
 ### Containered tools
 
-Build container with all required tools. This is optional. You can pull it from docker hub instead.
+The environment require `podman`/`buildah` or `docker`. The scripts will check which one installed.
+
+It's optional to build the build environment container. You can pull it from [docker hub](https://hub.docker.com/r/aboehm/clt2024-rust-on-linux-workshop) instead.
+
+To build the container with all required tools run
+
 
 ```sh
 ./scripts/build-builder
+# Enforce to use buildah
+DOCKER_BIN=buildah ./scripts/build-builder
+# Enforce to use docker
+DOCKER_BIN=docker ./scripts/build-builder
 ```
 
-After that you can enter the build environment with
+To enter the build environment run
 
 ```sh
 ./scripts/build-env
+# Enforce to use podman
+DOCKER_BIN=podman ./scripts/build-env
+# Enforce to use docker
+DOCKER_BIN=docker ./scripts/build-env
 ```
 
 ## Development

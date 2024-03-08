@@ -1,6 +1,22 @@
 #!/bin/sh
 
-set -e
+set -e -x
 
 cd docker
-docker build -t docker.io/aboehm/clt2024-rust-on-linux-workshop:`uname -m` .
+
+[ -z "${DOCKER_BIN}" ] && DOCKER_BIN=$(command -v buildah || true)
+[ -z "${DOCKER_BIN}" ] && DOCKER_BIN=$(command -v docker || true)
+
+case "${DOCKER_BIN}" in
+    */buildah|buildah)
+        buildah build -t docker.io/aboehm/clt2024-rust-on-linux-workshop:`uname -m` .
+        ;;
+
+    */docker|docker)
+        docker build -t docker.io/aboehm/clt2024-rust-on-linux-workshop:`uname -m` .
+        ;;
+
+    *)
+        echo "Can't find docker or buildah binary in PATH. Please install one of it."
+        exit 1
+esac
