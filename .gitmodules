@@ -1,6 +1,3 @@
 [submodule "linux"]
 	path = linux
 	url = https://github.com/aboehm/linux.git
-[submodule "rust-module"]
-	path = rust-module
-	url = https://github.com/Rust-for-Linux/rust-out-of-tree-module
