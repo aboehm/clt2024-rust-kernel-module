@@ -51,7 +51,7 @@ echo "Loading rust device module"
 insmod /lib/modules/\`uname -r\`/kernel/samples/rust/rust_chrdev.ko
 sleep 0.3
 echo "Reading one byte from character device"
-dd if=/dev/rchrdev of=/dev/null bs=1 count=1
+dd if=/dev/rchrdev of=/dev/null bs=16 count=2
 EOF
 chmod +x bin/test-rust-device
 
