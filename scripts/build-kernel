@@ -3,7 +3,7 @@
 set -e
 
 # Ensure the directory structure exists
-mkdir -p ../build/initramfs
+mkdir -p build/initramfs
 
 cd linux
 
