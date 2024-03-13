@@ -6,13 +6,10 @@ set -e
 rm -rf ./build/initramfs/lib/modules ./build/initramfs.cpio
 
 # Build kernel and modules
-./scripts/build-env ./scripts/build-kernel
-
-# Build the module
-# ./scripts/build-env ./scripts/build-module
+./scripts/enter-build-env ./scripts/build-kernel
 
 # Regenerate the initramfs
-./scripts/build-env ./scripts/gen-initramfs
+./scripts/enter-build-env ./scripts/gen-initramfs
 
 # Run the kernel
 ./scripts/run-kernel

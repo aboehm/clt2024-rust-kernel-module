@@ -33,6 +33,11 @@ Chemnitzer Linux Tage 2024
 
 ---
 
+* Softwareentwickler
+* hauptsächlich C/C++ & Python
+* Kein Kernel Maintainer
+
+
 ## Tooling aufsetzen
 
 * git
@@ -69,7 +74,8 @@ git clone --recurse-submodules \
 ├── docker              -- Container-Beschreibung
 ├── linux               -- Linux Kernel
 ├── linux-config        -- Kernel konfiguration
-└── scripts             -- Skripte
+├── scripts             -- Skripte
+└── slides              -- Vortragsfolien
 ```
 
 ---
@@ -80,11 +86,11 @@ git clone --recurse-submodules \
 
 ### Build-Umgebung
 
-* Notwendigen Tools enthalten
+* Notwendige Tools enthalten
 * Start [Container](https://hub.docker.com/r/aboehm/clt2024-rust-on-linux-workshop)
 
 ```sh
-./scripts/build-env
+./scripts/enter-build-env
 ```
 
 ```text
@@ -97,35 +103,40 @@ root@localhost:/usr/src#
 
 * Konfiguration kopieren 
 
-```sh
-cp linux-config/v6.7-rust-clt24 linux/.config
-```
+  ```sh
+  cp linux-config/v6.7-rust-clt24 linux/.config
+  ```
 
-* Konfiguration ändern
-
-```sh
-cd linux
-make LLVM=1 menuconfig
-```
-* Minimaler Kernel mit Rust-Unterstützung
+-> Minimaler Kernel mit Rust-Unterstützung
 
 ---
 
 ### Kernel-Build
 
+* Vorbereitung
+
+  ```sh
+  mkdir -p build/initramfs
+  cd linux
+  ```
+
 * Kernel & Module kompilieren
 
-```sh
-cd linux
-make -j`nproc` LLVM=1 all
-```
+  ```sh
+  make -j`nproc` LLVM=1 all
+  ```
+
+* Kernel kopieren
+
+  ```sh
+  cp arch/x86/boot/bzImage ../build/bzImage
+  ```
 
 * Module kopieren
 
-```sh
-cd linux
-make LLVM=1 INSTALL_MOD_PATH=<Path> modules_install
-```
+  ```sh
+  make LLVM=1 INSTALL_MOD_PATH=../build/initramfs modules_install
+  ```
 
 oder mit einem Skript
 
@@ -159,6 +170,7 @@ qemu-system-x86_64 \
     --initrd build/initramfs.cpio \
     --append "console=ttyS0 debug"
 ```
+
 ---
 
 ### Alles in einem Schritt
@@ -169,7 +181,7 @@ qemu-system-x86_64 \
 
 * Baut Kernel & Module
 * Generiert Initramfs neu
-* Startet QEMU
+* Startet Kernel mit QEMU
 
 ---
 
@@ -180,7 +192,7 @@ qemu-system-x86_64 \
 ### Dokumentation
 
 * Datei anlegen<br><br>
-  `samples/rust/rust_clt_workshop.rs`:
+  `linux/samples/rust/rust_clt_workshop.rs`:
 
 ```rust
 // SPDX-License-Identifier: GPL-2.0
@@ -262,6 +274,16 @@ obj-$(CONFIG_SAMPLE_RUST_CLT_WORKSHOP) += rust_clt_workshop.o
 
 ### Modul aktivieren
 
+```sh
+cd linux
+make LLVM=1 menuconfig
+```
+```
+Location:
+  -> Kernel hacking
+    -> Sample kernel code
+      -> Rust samples
+```
 ![Modul in Konfiguration aktivieren](media/enable-module.png)
 
 ---
@@ -300,7 +322,7 @@ TBD
 
 ---
 
-![Rust kernel infrastructure](rust-module-design.png)
+![Rust kernel infrastructure](media/rust-module-design.png)
 
 <small>
 

@@ -3,12 +3,13 @@
 set -e
 
 # Ensure the directory structure exists
-mkdir -p build/initramfs
+mkdir -p ../build/initramfs
 
 cd linux
 
-# Build the kernel
+# Build the kernel and modules
 make -j`nproc` LLVM=1 all
+# Build documentation for rust modules
 make LLVM=1 SPHINXDIRS="rust"
 
 # Copy the built kernel into build directory
