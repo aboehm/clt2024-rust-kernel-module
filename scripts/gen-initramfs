@@ -53,7 +53,7 @@ sleep 0.3
 echo "Reading bytes from character device"
 dd if=/dev/rchrdev bs=16 count=2
 echo "Writing data to device"
-echo "`date`: Hello" >/dev/rchrdev
+echo "\`date\`: Hello" >/dev/rchrdev
 echo "Reading bytes from character device"
 dd if=/dev/rchrdev bs=16 count=2
 EOF
