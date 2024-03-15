@@ -31,12 +31,11 @@ Chemnitzer Linux Tage 2024
 
 ### Antonia Siegert
 
----
-
 * Softwareentwickler
 * hauptsächlich C/C++ & Python
 * Kein Kernel Maintainer
 
+---
 
 ## Tooling aufsetzen
 
@@ -101,11 +100,11 @@ root@localhost:/usr/src#
 
 ### Konfiguration
 
-* Konfiguration kopieren 
+* Konfiguration kopieren
 
-  ```sh
-  cp linux-config/v6.7-rust-clt24 linux/.config
-  ```
+```sh
+cp linux-config/v6.7-rust-clt24 linux/.config
+```
 
 -> Minimaler Kernel mit Rust-Unterstützung
 
@@ -113,30 +112,18 @@ root@localhost:/usr/src#
 
 ### Kernel-Build
 
-* Vorbereitung
-
-  ```sh
-  mkdir -p build/initramfs
-  cd linux
-  ```
-
+```sh
+cd linux
+```
 * Kernel & Module kompilieren
-
-  ```sh
-  make -j`nproc` LLVM=1 all
-  ```
-
-* Kernel kopieren
-
-  ```sh
-  cp arch/x86/boot/bzImage ../build/bzImage
-  ```
-
+```sh
+make -j`nproc` LLVM=1 all
+```
 * Module kopieren
-
-  ```sh
-  make LLVM=1 INSTALL_MOD_PATH=../build/initramfs modules_install
-  ```
+```sh
+make LLVM=1 INSTALL_MOD_PATH=<Pfad zu initramfs> \
+   modules_install
+```
 
 oder mit einem Skript
 
@@ -220,7 +207,7 @@ struct RustCltModule {}
 
 ---
 
-### Loading 
+### Loading
 
 ```rust
 impl kernel::Module for RustCltModule {
@@ -293,7 +280,7 @@ Location:
 * Laden
 
 ```text
-# insmod /lib/modules/6.7.0+/kernel/samples/rust/rust_clt_workshop.ko 
+# insmod /lib/modules/6.7.0+/kernel/samples/rust/rust_clt_workshop.ko
 [   15.361326] rust_clt_workshop: Hello CLT!
 ```
 
@@ -306,17 +293,18 @@ Location:
 
 ---
 
-## Pause
+## Breakout
 
-Es geht weiter, wenn alle das erste Modul geladen haben.
+- ~30min
+- Ziel: Beispielmodul bauen und testen
 
 ---
 
 ## Rust Integration
 
-TBD
-
 ---
+
+### Rust kernel infrastructure
 
 ![Rust kernel infrastructure](media/rust-infrastructure.png)
 
@@ -328,7 +316,7 @@ TBD
 
 ---
 
-### Basics
+### Rust Basics
 
 ---
 
@@ -401,13 +389,15 @@ let data = pin_init!(Data { value <- new_mutex!(0), });
 let data = Arc::pin_init(data).unwrap();
 {
     *data.value.lock() = 42; // Exklusive Operation
-    // Implizite Freigabe des Mutex                   
+    // Implizite Freigabe des Mutex
 }
 ```
 
 ---
 
-![Rust kernel infrastructure](media/rust-module-design.png)
+### Rust module design
+
+![Rust module design](media/rust-module-design.png)
 
 <small>
 
@@ -417,7 +407,7 @@ let data = Arc::pin_init(data).unwrap();
 
 ---
 
-### Aktueller Status
+#### Aktueller Status
 
 * Basisfunktionen vorhanden<br>(Allocater, Logging, Locks)
 * Wenige Rust-Abstraktionen seitens des Kernel
@@ -499,9 +489,20 @@ Device abmelden
 
 [![](https://cdn-0.plantuml.com/plantuml/png/rPEnRXH138RxUGhJH4a12WND5IXA81G1TD8f7TB9sVrlOp7h6NcyGPVduKruCRIp5rWbEQHSHpcs_tz-VvBFYhFvqCVmAXjtFPCZtPFRW52-YsOsxcd9vj98PlKbjwreHs_VdOP0HFblYxwaTeW8zAXy1LF49-MbfSwuxwlDdnUzVhyJB2XbwF49bMrfE4u6HxlcE3Pzjw2DHAnJXh5Bqh9OJBewputB7JiUicboKCJ6mpaCuiKHuw0TtIMb3-pG85eTtsIhodNBpW7QqgYjffFNFEdg-kBYushr9EB3LWkwb0XgfJGcsPEDarF0w6JWTX-4sfn1g0kOTBSUbadKONH4dt_zr0xZ3c4vR3Omafwk2wnaRZ0F_op16PMlWzyVYcCMkabvk_Qq7Whi-EIRNgKiCD2KhhgFyMWrvYFHdR2-dsVy3xIV456WeFEjezH1n0BwOUBOoxLs_q-m6qlzWMXVphOqjoQumPokjlkFjecfu92hDKJmA9rHkpH8npTu4ROMZw_-qACr-61Af-4CsWvz_0q0)](https://www.plantuml.com/plantuml/uml/rPEnRXH138RxUGhJH4a12WND5IXA81G1TD8f7TB9sVrlOp7h6NcyGPVduKruCRIp5rWbEQHSHpcs_tz-VvBFYhFvqCVmAXjtFPCZtPFRW52-YsOsxcd9vj98PlKbjwreHs_VdOP0HFblYxwaTeW8zAXy1LF49-MbfSwuxwlDdnUzVhyJB2XbwF49bMrfE4u6HxlcE3Pzjw2DHAnJXh5Bqh9OJBewputB7JiUicboKCJ6mpaCuiKHuw0TtIMb3-pG85eTtsIhodNBpW7QqgYjffFNFEdg-kBYushr9EB3LWkwb0XgfJGcsPEDarF0w6JWTX-4sfn1g0kOTBSUbadKONH4dt_zr0xZ3c4vR3Omafwk2wnaRZ0F_op16PMlWzyVYcCMkabvk_Qq7Whi-EIRNgKiCD2KhhgFyMWrvYFHdR2-dsVy3xIV456WeFEjezH1n0BwOUBOoxLs_q-m6qlzWMXVphOqjoQumPokjlkFjecfu92hDKJmA9rHkpH8npTu4ROMZw_-qACr-61Af-4CsWvz_0q0)
 
+
 ---
 
-## Anhang
+### Rust Abstraktion
+
+![Rust Abstraction](media/module-overview.png)
+
+---
+
+## Breakout
+
+---
+
+## Backup Folien
 
 ---
 
@@ -512,6 +513,12 @@ Device abmelden
 * Fehlende Funktionalitäten
   * PoC bei Rust-For-Linux für v5.19
   * Heutige Basis v6.7 => Patch
+
+---
+
+### Dokumentation bauen
+
+TBD
 
 ---
 
