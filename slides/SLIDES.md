@@ -278,7 +278,7 @@ obj-$(CONFIG_SAMPLE_RUST_CLT_WORKSHOP) += rust_clt_workshop.o
 cd linux
 make LLVM=1 menuconfig
 ```
-```
+```text
 Location:
   -> Kernel hacking
     -> Sample kernel code
@@ -306,6 +306,12 @@ Location:
 
 ---
 
+## Pause
+
+Es geht weiter, wenn alle das erste Modul geladen haben.
+
+---
+
 ## Rust Integration
 
 TBD
@@ -322,6 +328,85 @@ TBD
 
 ---
 
+### Basics
+
+---
+
+#### Speicherverwaltung
+
+```C
+size_t size = 1024;
+char* buf = (char*) kmalloc(size, GFP_KERNEL);
+memset(buf, 0, size);
+// access buffer `buf`
+kfree(buf);
+```
+
+```Rust
+let mut buf = Vec::<u8>::try_with_capacity(1024)?;
+buf.resize(0u8, buf.capacity());
+// access buffer `buf`
+drop(buf); // Optional durch Ownership
+```
+
+---
+
+#### Listen
+
+```C
+struct my_list {
+     struct list_head list;
+     int data;
+};
+struct my_list* node = \
+    kmalloc(sizeof(struct my_list), GFP_KERNEL);
+node->data = 42;
+INIT_LIST_HEAD(&node->list);
+list_add_tail(&node->list, &Head);
+struct my_list* i = NULL;
+list_for_each_entry(i, &Head_Node, list) { ... }
+list_del(node);
+```
+
+```Rust
+let mut v = Vec::<i32>::new();
+v.try_push(42)?;
+for i in v.iter() { ... }
+v.pop();
+```
+
+---
+
+#### Mutex
+
+```C
+struct my_data {
+    struct mutex lock;
+    int value;
+}
+struct my_data data;
+mutex_init(&data.lock);
+mutex_lock(&data.lock);
+my_data.value = 42; // Exklusive Operation
+mutex_unlock(&data.lock);
+```
+
+```Rust
+#[pin_data] // Benötigt für `pin_init!`
+struct Data {
+    #[pin]
+    value: Mutex<u32>,
+}
+let data = pin_init!(Data { value <- new_mutex!(0), });
+let data = Arc::pin_init(data).unwrap();
+{
+    *data.value.lock() = 42; // Exklusive Operation
+    // Implizite Freigabe des Mutex                   
+}
+```
+
+---
+
 ![Rust kernel infrastructure](media/rust-module-design.png)
 
 <small>
@@ -329,6 +414,90 @@ TBD
 *Quelle: [Rust for Linux, Miguel Ojeda, Wedson Almeida Filho (März 2022)](https://www.youtube.com/watch?v=fVEeqo40IyQ&list=PL85XCvVPmGQgL3lqQD5ivLNLfdAdxbE_u)*
 
 </small>
+
+---
+
+### Aktueller Status
+
+* Basisfunktionen vorhanden<br>(Allocater, Logging, Locks)
+* Wenige Rust-Abstraktionen seitens des Kernel
+* Vereinzelte genutzte Funktionen
+* Einige Out-Of-Tree Entwicklungen<br>(Asahi Linux, Google binder)
+
+---
+
+## Heutiges Ziel
+
+* Erstellung eines Miscellaneous Device
+* Character Device `/dev/rchrdev`
+* Globaler Puffer
+* Lesen und Schreiben auf Device
+
+```sh
+$ echo "Hello CLT" >/dev/rchrdev
+$ cat /dev/rchrdev
+Hello CLT
+$
+```
+
+---
+
+### Ausgangsbasis
+
+* Kernel Tree v6.7
+* Rust For Linux angelehnte Abstraktionssicht für Miscellaneous Device
+
+---
+
+### Notwendige Schnittstellen
+
+<table>
+<tr>
+<td>Liste von Callbacks</td>
+<td>
+
+`struct file_operations`
+</td>
+</tr>
+<tr>
+<td>Information zum Device</td>
+<td>
+
+`struct miscdevice`
+</td>
+</tr>
+
+<tr>
+<td>
+Device registrieren
+</td>
+<td>
+
+`misc_register`
+</td>
+</tr>
+<tr>
+<td>
+Device abmelden
+</td>
+<td>
+
+`misc_unregister`
+</td>
+</tr>
+</table>
+
+---
+
+#### Lebenzeit des Modules
+
+[![](https://cdn-0.plantuml.com/plantuml/png/ZP71IWGn38RlVOfuquEi7hpCGGIzYJ1l8B4DGzWsBMb6qQUtE7LMc6Kmbs6I_7-__dseXcfpYkwYA4u9mIX_WUbChXvP2Yec656DFHSK6p44bWbkxswSWrRbD8EN7EP8c_OpgL3Sj4VDKtDVR30QiDIKWuDUYmokxxllyFiTMDWkhzP5zCRlQBIUtslvRGRTQe34rRygJLoDj3jiDpihnKhmX4QS2oaQPra5dVslTrkIWnA6muUoqS77tFJritgCSUTIZstyXlwuWtr6tG667q214x2c_sKOD9UT17fMi-ocjG4CTEunIC8t)](https://www.plantuml.com/plantuml/uml/ZP71IWGn38RlVOfuquEi7hpCGGIzYJ1l8B4DGzWsBMb6qQUtE7LMc6Kmbs6I_7-__dseXcfpYkwYA4u9mIX_WUbChXvP2Yec656DFHSK6p44bWbkxswSWrRbD8EN7EP8c_OpgL3Sj4VDKtDVR30QiDIKWuDUYmokxxllyFiTMDWkhzP5zCRlQBIUtslvRGRTQe34rRygJLoDj3jiDpihnKhmX4QS2oaQPra5dVslTrkIWnA6muUoqS77tFJritgCSUTIZstyXlwuWtr6tG667q214x2c_sKOD9UT17fMi-ocjG4CTEunIC8t)
+
+---
+
+#### Dateioperation
+
+[![](https://cdn-0.plantuml.com/plantuml/png/rPEnRXH138RxUGhJH4a12WND5IXA81G1TD8f7TB9sVrlOp7h6NcyGPVduKruCRIp5rWbEQHSHpcs_tz-VvBFYhFvqCVmAXjtFPCZtPFRW52-YsOsxcd9vj98PlKbjwreHs_VdOP0HFblYxwaTeW8zAXy1LF49-MbfSwuxwlDdnUzVhyJB2XbwF49bMrfE4u6HxlcE3Pzjw2DHAnJXh5Bqh9OJBewputB7JiUicboKCJ6mpaCuiKHuw0TtIMb3-pG85eTtsIhodNBpW7QqgYjffFNFEdg-kBYushr9EB3LWkwb0XgfJGcsPEDarF0w6JWTX-4sfn1g0kOTBSUbadKONH4dt_zr0xZ3c4vR3Omafwk2wnaRZ0F_op16PMlWzyVYcCMkabvk_Qq7Whi-EIRNgKiCD2KhhgFyMWrvYFHdR2-dsVy3xIV456WeFEjezH1n0BwOUBOoxLs_q-m6qlzWMXVphOqjoQumPokjlkFjecfu92hDKJmA9rHkpH8npTu4ROMZw_-qACr-61Af-4CsWvz_0q0)](https://www.plantuml.com/plantuml/uml/rPEnRXH138RxUGhJH4a12WND5IXA81G1TD8f7TB9sVrlOp7h6NcyGPVduKruCRIp5rWbEQHSHpcs_tz-VvBFYhFvqCVmAXjtFPCZtPFRW52-YsOsxcd9vj98PlKbjwreHs_VdOP0HFblYxwaTeW8zAXy1LF49-MbfSwuxwlDdnUzVhyJB2XbwF49bMrfE4u6HxlcE3Pzjw2DHAnJXh5Bqh9OJBewputB7JiUicboKCJ6mpaCuiKHuw0TtIMb3-pG85eTtsIhodNBpW7QqgYjffFNFEdg-kBYushr9EB3LWkwb0XgfJGcsPEDarF0w6JWTX-4sfn1g0kOTBSUbadKONH4dt_zr0xZ3c4vR3Omafwk2wnaRZ0F_op16PMlWzyVYcCMkabvk_Qq7Whi-EIRNgKiCD2KhhgFyMWrvYFHdR2-dsVy3xIV456WeFEjezH1n0BwOUBOoxLs_q-m6qlzWMXVphOqjoQumPokjlkFjecfu92hDKJmA9rHkpH8npTu4ROMZw_-qACr-61Af-4CsWvz_0q0)
 
 ---
 
