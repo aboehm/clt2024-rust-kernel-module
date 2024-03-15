@@ -54,11 +54,11 @@ DOCKER_BIN=docker ./scripts/build-builder
 To enter the build environment run
 
 ```sh
-./scripts/build-env
+./scripts/enter-build-env
 # Enforce to use podman
-DOCKER_BIN=podman ./scripts/build-env
+DOCKER_BIN=podman ./scripts/enter-build-env
 # Enforce to use docker
-DOCKER_BIN=docker ./scripts/build-env
+DOCKER_BIN=docker ./scripts/enter-build-env
 ```
 
 ## Development
@@ -109,12 +109,6 @@ Generate a new *initramfs* image
 
 ```sh
 ./scripts/gen-initramfs
-```
-
-Build and install the rust module
-
-```sh
-./scripts/build-module
 ```
 
 Run the built kernel with initramfs
