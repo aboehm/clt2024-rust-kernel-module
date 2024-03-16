@@ -414,6 +414,16 @@ let data = Arc::pin_init(data).unwrap();
 
 ---
 
+### Warum kein Out-Of-Tree Modul?
+
+* Rust basiert auf LLVM
+* Kernel muss mit *clang* gebaut werden
+* Fehlende Funktionalitäten
+  * PoC bei Rust-For-Linux für v5.19
+  * Heutige Basis v6.7 => Patch
+
+---
+
 ## Heutiges Ziel
 
 * Erstellung eines Miscellaneous Device
@@ -500,16 +510,6 @@ Device abmelden
 ---
 
 ## Backup Folien
-
----
-
-### Warum kein Modul?
-
-* Rust basiert auf LLVM
-* Kernel mit *clang* bauen
-* Fehlende Funktionalitäten
-  * PoC bei Rust-For-Linux für v5.19
-  * Heutige Basis v6.7 => Patch
 
 ---
 
