@@ -176,11 +176,9 @@ qemu-system-x86_64 \
 
 ---
 
-### Dokumentation
+### Modul anlegen
 
-* Datei anlegen<br><br>
-  `linux/samples/rust/rust_clt_workshop.rs`:
-
+Datei anlegen: `linux/samples/rust/rust_clt_workshop.rs`
 ```rust
 // SPDX-License-Identifier: GPL-2.0
 
@@ -236,7 +234,7 @@ impl Drop for RustCltModule {
 
 ### Kernel config erweitern
 
-Option hinzufügen in<br><br>`samples/rust/Kconfig`
+Option hinzufügen in: `samples/rust/Kconfig`
 
 ```text
 config SAMPLE_RUST_CLT_WORKSHOP
@@ -251,7 +249,7 @@ config SAMPLE_RUST_CLT_WORKSHOP
 
 ### Build dependencies anpassen
 
-Hinzufügen in<br><br>`samples/rust/Makefile`
+Hinzufügen in:  `samples/rust/Makefile`
 
 ```
 obj-$(CONFIG_SAMPLE_RUST_CLT_WORKSHOP) += rust_clt_workshop.o
@@ -279,7 +277,7 @@ Location:
 
 * Laden
 
-```text
+```text { width.cutoff= 60 }
 # insmod /lib/modules/6.7.0+/kernel/samples/rust/rust_clt_workshop.ko
 [   15.361326] rust_clt_workshop: Hello CLT!
 ```
@@ -515,9 +513,13 @@ Device abmelden
 
 ---
 
-### Dokumentation bauen
+### Dokumentation bauen und lokal ansehen
 
-TBD
+```sh
+./scripts/enter-build-env ./scripts/build-documentation
+./scripts/enter-build-env ./scripts/serve-documentation
+```
+-> http://0.0.0.0:8000/kernel
 
 ---
 
