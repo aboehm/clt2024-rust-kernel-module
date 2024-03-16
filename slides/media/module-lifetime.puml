@@ -1,0 +1,30 @@
+@startuml
+hide footbox
+skinparam ParticipantPadding 100
+skinparam ParticipantFontSize 20
+skinparam ArrowFontSize 20
+skinparam SequenceGroupFontSize 18
+skinparam SequenceGroupHeaderFontSize 18
+skinparam SequenceGroupHeaderMargin 18
+
+participant Module
+participant Kernel
+participant Program
+
+alt insmod
+    Kernel -> Module: Module::init()
+    activate Module
+    Module -> Kernel: misc_register()
+    Module -> Kernel
+else Dateioperation
+    Program -> Kernel: open/read/write/close syscall
+    Kernel -> Module: Callback
+    Module -> Kernel: 
+    Kernel -> Program: Daten 
+else rmmod
+    Kernel -> Module: Module::drop()
+    Module -> Kernel: misc_unregister()
+    Module -> Kernel: 
+    deactivate Module
+end
+@enduml

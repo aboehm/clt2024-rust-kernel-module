@@ -1,0 +1,68 @@
+@startuml
+!pragma teoz true
+hide footbox
+skinparam ParticipantPadding 150
+skinparam ParticipantFontSize 20
+skinparam ArrowFontSize 20
+skinparam SequenceGroupFontSize 18
+skinparam SequenceGroupHeaderFontSize 18
+skinparam SequenceGroupHeaderMargin 18
+skinparam NoteFontSize 18
+
+/'' scale 2 '/
+
+participant Module
+participant Kernel
+participant Programm
+
+Programm -> Kernel: open() syscall
+& Kernel -> Module: file_operations::open()
+activate Module
+note left
+Bereitstellung von Daten
+in file.private_data
+end note
+Module -> Kernel: SUCCESS
+& Kernel -> Programm: File discriptor
+
+alt read
+Programm -> Kernel: read() syscall
+note right
+    Pointer & Länge von
+    Puffer im Userspace
+end note
+& Kernel -> Module:
+note left
+    Nutzung von Daten
+    in file.private_data
+end note
+Module --> Kernel: copy_to_user() - Kopiere Puffer von\nKernel Space in User Space
+Module -> Kernel
+& Kernel -> Programm: Gelesene Bytes
+else write
+Programm -> Kernel: write() syscall
+note right
+    Pointer & Länge von
+    Puffer im Userspace
+end note
+& Kernel -> Module:
+note left
+    Nutzung von Daten
+    in file.private_data
+end note
+Module --> Kernel: copy_from_user() - Kopiere Puffer von\nUser Space in Kernel Space
+
+Module -> Kernel
+& Kernel -> Programm: Geschriebe Bytes
+end
+
+Programm -> Kernel: close() syscall
+& Kernel -> Module: file_operations::release()
+note left
+    Freigabe von Daten
+    in file.private_data
+end note
+deactivate Module
+Module -> Kernel: SUCCESS
+& Kernel -> Programm: return 0
+@enduml
