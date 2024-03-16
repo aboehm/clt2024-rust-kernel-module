@@ -57,7 +57,9 @@ apt-get install git podman qemu-system-x86
 ## Projekt
 
 ```sh
-git clone --recurse-submodules \
+git clone \
+    --recurse-submodules \
+    --shallow-submodules \
     https://github.com/aboehm/clt2024-rust-kernel-module.git
 ```
 
