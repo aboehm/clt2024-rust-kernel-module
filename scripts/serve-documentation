@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+if [ ! -d linux/Documentation/output/rust/rustdoc ]; then
+    echo "No documentation to serve, maybe you forgot do build it first? (`./scripts/enter-build-env ./scripts/build-documentation`)"
+    exit 1
+fi
+
+# Serve the documentation locally
+echo "Rust kernel documentation -> http://0.0.0.0:8000/kernel"
+python3 -m http.server --directory linux/Documentation/output/rust/rustdoc
