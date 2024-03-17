@@ -441,6 +441,8 @@ Hello CLT
 $
 ```
 
+[Musterlösung gibt es hier](https://github.com/aboehm/linux/blob/v6.7-rust-clt24-dev/samples/rust/rust_chrdev.rs)
+
 ---
 
 ### Ausgangsbasis
