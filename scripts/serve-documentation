@@ -8,5 +8,5 @@ if [ ! -d linux/Documentation/output/rust/rustdoc ]; then
 fi
 
 # Serve the documentation locally
-echo "Rust kernel documentation -> http://0.0.0.0:8000/kernel"
-python3 -m http.server --directory linux/Documentation/output/rust/rustdoc
+echo "Rust kernel documentation -> http://127.0.0.1:8000/kernel"
+python3 -m http.server -b 127.0.0.1 --directory linux/Documentation/output/rust/rustdoc
