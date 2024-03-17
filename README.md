@@ -91,10 +91,6 @@ You can run the kernel with [QEMU](https://qemu.org)
 qemu-system-x86_64 --kernel arch/x86/boot/bzImage
 ```
 
-### A simple root file system
-
-TBD
-
 ### Repetitive steps via helper scripts
 
 There're several helper scripts to run some required commands.
