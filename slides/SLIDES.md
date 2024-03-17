@@ -11,8 +11,8 @@ Chemnitzer Linux Tage 2024
 * Tooling aufsetzen
 * Linux Kernel kompilieren
 * Eigenes Kernelmodul
-* Interaktion mit dem Modul
 * Kennenlernen der Rust-Integration
+* Interaktion mit dem Modul
 
 ---
 
@@ -58,6 +58,7 @@ apt-get install git podman qemu-system-x86
 
 ```sh
 git clone \
+    --depth 1 \
     --recurse-submodules \
     --shallow-submodules \
     https://github.com/aboehm/clt2024-rust-kernel-module.git
@@ -521,18 +522,7 @@ Device abmelden
 ./scripts/enter-build-env ./scripts/build-documentation
 ./scripts/enter-build-env ./scripts/serve-documentation
 ```
--> http://0.0.0.0:8000/kernel
-
----
-
-### Debug the kernel
-
-```
-file vmlinux
-break misc_open
-break misc_register
-target remote localhost:1234
-```
+-> [http://127.0.0.1:8000/kernel](http://127.0.0.1:8000/kernel)
 
 ---
 
@@ -560,4 +550,5 @@ apt-get install \
 
 ### Links
 
+* [Rust For Linux](https://rust-for-linux.com/)
 * [Memory Layout (x86-64)](https://www.kernel.org/doc/Documentation/x86/x86_64/mm.txt)
