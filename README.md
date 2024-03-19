@@ -1,6 +1,8 @@
 # Rust on Linux Workshop
 
-Files for Rust for Linux Workshop at the Chemnitzer Linux Tage 2024
+Files for Rust for Linux Workshop at the Chemnitzer Linux Tage 2024. The slides are located under [slides/SLIDES.md](slides/SLIDES.md).
+
+You will find the solution for the workshop task in [`samples/rust/rust_chrdev_solution.rs`](samples/rust/rust_chrdev_solution.rs)
 
 ## Overview
 
@@ -31,7 +33,7 @@ apt-get install git podman qemu-system-x86
 Clone the repository
 
 ```
-git clone --recurse-submodules --shallow-submodules https://github.com/aboehm/clt2024-rust-kernel-module.git 
+git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/aboehm/clt2024-rust-kernel-module.git 
 ```
 
 ### Containered tools
@@ -123,6 +125,14 @@ All these commands can be run at once with
 
 ## Trouble shooting
 
+### Permission issues
+
+When using docker without the provided scripts file will be created or written as root. Change the user by running
+
+```sh
+sudo chown -R $(id -u):$(id -g) .
+```
+
 ### Version errors during the build of the kernel module
 
 Remove the already build kernel under `build/bzImage`.
@@ -130,3 +140,7 @@ Remove the already build kernel under `build/bzImage`.
 ### There're a lot of old files in the booted RootFS
 
 Files in the initramfs directory will overwritten but not deleted. Delete all files of `build/initramfs`.
+
+### Rust option is missing in the kernel configuration dialog
+
+Maybe some build commands were executed without `LLVM=1`. Copy the configuration again and run `make LLVM=1 menuconfig` again to select your module. Ensure you add the LLVM parameter to each call of `make`.
