@@ -2,7 +2,7 @@
 
 Files for Rust for Linux Workshop at the Chemnitzer Linux Tage 2024. The slides are located under [slides/SLIDES.md](slides/SLIDES.md).
 
-You will find the solution for the workshop task in [`samples/rust/rust_chrdev_solution.rs`](linux/samples/rust/rust_chrdev_solution.rs)
+You will find the solution for the workshop task in [`linux/samples/rust/rust_chrdev_solution.rs`](https://github.com/aboehm/linux/blob/v6.7-rust-clt24/samples/rust/rust_chrdev_solution.rs)
 
 ## Overview
 
